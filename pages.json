@@ -1,0 +1,38 @@
+{
+	"easycom": {
+		"^u-(.*)": "uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [
+		// {
+		//     "path" : "pages/views/tools/house",
+		//     "style" : {
+		//         "navigationBarTitleText" : "房贷计算器",
+		// 		"navigationBarBackgroundColor":"#F8F8F8"
+		//     }
+		// },
+		// {
+		// 	"path": "pages/ercode/index"
+		// },
+		// { "path": "pages/root/index" },
+		{ "path": "pages/index/index" },
+		{ 
+			"path": "pages/search/index",
+			"style": {
+				"navigationStyle": "default",
+				"navigationBarBackgroundColor": "#FFFFFF",
+				"navigationBarTitleText": "搜索消息"
+			}
+		},
+		{ "path": "pages/vip/index" },
+		{ "path": "pages/vip/detail" },
+		{ "path": "pages/single/index" }
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "实战课堂",
+		"navigationStyle": "custom",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {}
+}
