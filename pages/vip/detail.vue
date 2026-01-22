@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view @click="hideWrite">
 		<CustomHeader title="" :border="false" />
 		<view class="container" v-if="info">
 			<view class="top-info">
@@ -18,9 +18,64 @@
 				阅读 {{ formatCount(info.read_count || 0) }}
 			</view>
 			
-			<view class="comment-input">
-				<input placeholder="留言" />
+			<view class="comment">
+				<text class="title">留言</text>
+				<view class="input-box flex items-center" v-if="!showPageWrite" @click.stop="showPageWrite = true">
+					<u--image :src="userInfo.headimgurl" width="60rpx" height="60rpx" radius="6rpx" />
+					<view class="comment-input flex-1">
+						<text>写留言</text>
+					</view>
+				</view>
+				<MessageBoardWrite v-else />
 			</view>
+			
+			<!-- 留言列表 -->
+			<MessageBoardList />
+			
+		</view>
+		
+		<view class="footer flex justify-between items-center">
+			<template v-if="!showBottomWrite">
+				<view class="flex items-center">
+					<u--image :src="info.cover" width="60rpx" height="60rpx" radius="200rpx" mode="aspectFill" />
+					<view class="flex">
+						<text class="room-name">{{ info.author }}</text>
+						<span class="flag"></span>
+					</view>
+				</view>
+				
+				<view class="flex justify-end items-center">
+					<view class="model-item flex items-center justify-center flex-column">
+						<view class="cover-box flex items-center justify-center">
+							<u--image src="/static/zan.png" width="34rpx" height="34rpx" />
+						</view>
+						<text>赞</text>
+					</view>
+					
+					<view class="model-item flex items-center justify-center flex-column">
+						<view class="cover-box flex items-center justify-center">
+							<u--image src="/static/share.png" width="34rpx" height="34rpx" />
+						</view>
+						<text>分享</text>
+					</view>
+					
+					<view class="model-item flex items-center justify-center flex-column">
+						<view class="cover-box flex items-center justify-center">
+							<u--image src="/static/shoucang.png" width="34rpx" height="34rpx" />
+						</view>
+						<text>推荐</text>
+					</view>
+					
+					<view class="model-item flex items-center justify-center flex-column" @click.stop="openWrite">
+						<view class="cover-box flex items-center justify-center">
+							<u--image src="/static/liuyan.png" width="34rpx" height="34rpx" />
+						</view>
+						<text>写留言</text>
+					</view>
+				</view>
+			</template>
+			<!-- 留言输入框 -->
+			<MessageBoardWrite v-else />
 		</view>
 	</view>
 </template>
@@ -29,6 +84,9 @@
 import {
 	queryVipCourseDetails
 } from '@/api';
+import { mapState } from 'vuex'
+import MessageBoardWrite from './MessageBoardWrite'
+import MessageBoardList from './MessageBoardList'
 
 export default {
 	data() {
@@ -39,7 +97,17 @@ export default {
 			  img:"margin-top:16rpx;width:100%",
 			  span: "font-size: 30rpx",
 			},
+			
+			showBottomWrite:false,
+			showPageWrite:false
 		};
+	},
+	components:{
+		MessageBoardWrite,
+		MessageBoardList
+	},
+	computed:{
+		...mapState(["roomInfo","userInfo"])
 	},
 	onLoad({ id }) {
 		uni.showLoading({
@@ -49,6 +117,16 @@ export default {
 	},
 	methods: {
 		
+		hideWrite(){
+			this.showBottomWrite = this.showPageWrite = false;
+		},
+		
+		openWrite(){
+			this.showBottomWrite = true;
+			this.showPageWrite = false;
+		},
+		
+		// 格式化阅读数
 		formatCount(count){
 			// 转换成万
 			if(count > 10000){
@@ -75,15 +153,83 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.footer{
+	position: fixed;
+	z-index: 500;
+	background-color: #FFF;
+	border-top: 1rpx solid rgba(0, 0, 0, .1);
+	left: 0;
+	bottom: 0;
+	right: 0;
+	padding: 24rpx 32rpx;
+	padding-right: 20rpx;
+	
+	.model-item{
+		font-size: 20rpx;
+		text-align: center;
+		
+		.cover-box{
+			width: 80rpx;
+			height: 40rpx;
+		}
+	}
+	
+	.flag{
+		display: block;
+		background-image: url(https://res.wx.qq.com/op_res/nLnAiLrrETuU96Aym1ZDNjhMga6Fe1hiYp332DlZsT_u4THJyu8XegVlG723G5FblhAwxLO31iFVMkzq62jS3w);
+		width: 28rpx;
+		height: 28rpx;
+		margin-left: 4rpx;
+		background-size:cover;
+		background-position: center;
+		background-repeat: no-repeat;
+	}
+	
+	.room-name{
+		padding-left:16rpx;
+		font-size: 28rpx;
+		font-weight: 500;
+		color: #333;
+	}
+}
+
 .container{
 	// border-top: 1px solid #f0f0f0;
-	padding:68rpx 32rpx;
+	padding:180rpx 32rpx;
 	padding-top: 0;
+	
+	.comment{
+		border-top: 1px solid rgba(0,0,0,.05);
+		margin-top: 50rpx;
+		padding-top: 32rpx;
+		
+		.title{
+			font-weight: bold;
+			font-size: 28rpx;
+		}
+		
+		.input-box{
+			margin-top: 42rpx;
+			
+			.comment-input{
+				margin-left: 16rpx;
+				padding:24rpx;
+				background-color: rgba(0,0,0,.035);
+				border-radius: 10rpx;
+				font-size: 26rpx;
+				color: rgba(0,0,0,.3);
+			}
+		}
+		
+	}
+	
+	
 	
 	.read-box{
 		margin-top:36rpx;
 		font-size: 26rpx;
-		color: #666;
+		color: rgba(0,0,0,.4);
 	}
 	
 	.top-info{
